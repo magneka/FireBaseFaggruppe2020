@@ -1,0 +1,68 @@
+<h1>Ulriken Consulting Firebase Workshop</h1>
+
+<p>Velkommen til Firebase innføring. Vi skal sette opp en Firebase, og lage software 
+    som henter og skriver data i denne, uten rest api, dvs ordentlig "Backend as a Service"
+</p>
+
+<h2>Oppgave 1: Opprette databasen</h2>
+<p>
+    Før vi kan bengynne er må vi sette opp firebase.    
+</p>
+<ul>
+    <li>Logg på google med en gmail konto. Andre kontoer nytter ikke.</li>
+    <li>Gå til Firebase.com</li>
+    <li>Opprett et nytt firebase prosjekt (ikke kryss av for google analytics)</li>
+    <li>Det kommer et snurrehule frem til prosjektet er ferdig opprettet, trykk continue</li>
+    <li>Sett opp autentisering (bruker/passord), under Sign-in-method, velg email/password og anonymous</li>
+    <li>Opprett database (Cloude Firestore), klikk på Create Database, velg start in test mode og lokasjon eur3</li>
+    <li>Du får snurrehjul mens databasen opprettes, og du ser at du kan klikke på create collection</li>
+    <li>Opprett en Web applikasjon, gå til project setting og se på ikonene nede for web, ios+++</li>
+    <li>Klikk på Web ikonet og registrer en app (f.eks: FbFag01)</li>
+    <li>Nå får du opp javascript kode som kan kopieres inn i prosjektet, kopier kun fireBaseConfig.</li>
+    <li>Lim den inn i index.js.</li>
+    <li>Live Server er en plugin som kan brukes for å server html koden, stå på index og klikk på ikonet nede til høyre.</li>    
+</ul>
+
+<p>Da skal vi være klar til å begynne kodingen</p>
+
+<h2>Oppgave 2a: Opprette bruker og pålogging</h2>
+<p>
+    Det ligger et skjermbilde med knapper som oppretter en bruker, og logger på denne.
+    Det er ikke noen input felter for brukernavn (dvs epostadresse) og passord.
+    Klikk på opprett bruker og sjekk i firebase konsollet at brukeren dukker opp, 
+    og at du kan logge på. Vi trenger ikke lage skjermbilder for brukerid og passord ennå...
+</p>
+
+<h2>Oppgave 2b: Opprette data (seeding database)</h2>
+<p>
+    Filen seedData.html inneholder rutiner for initialisering av databasen
+    Der er tre knapper for hver av tabellene. Det er laget JSON for initielle data for 
+    hver av tabellene.  Kjør seed kunder ved å klikke på knappen. Se at data kommer inn 
+    i tabellen.    
+</p>
+<p>
+    Da kan du fullføre koden for å seede de to andre tabellene, sjekk at data havner der 
+    de skal.
+</p>
+
+<h2>Kundebildene</h2>
+<p>
+    I systemet ligger det to kundebilder, et som lister alle kundene, og 
+    et for å registrere/endre.  Dette kan du se på hvordan man leser og skriver til databasen.
+</p>
+
+<h2>Oppgave 3: Produkt bildene</h2>
+<p>
+    Se på filene to filer "produkt.html" og "produkter.html".  Du skal fullføre disse etter samme lest 
+    som kundebildene.
+    
+</p>
+
+<h2>Oppgave 4: Ordre bildene</h2>
+<p>
+    Her er det mye mer du må gjøre, blir det noen som får til dette??
+</p>
+
+<h2>Dersom du vil ha en rask oversikt over kommandoer</h2>
+
+<p>Cheatsheet: https://medium.com/@aaron_lu1/firebase-cloud-firestore-add-set-update-delete-get-data-6da566513b1b</p>

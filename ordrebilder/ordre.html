@@ -1,0 +1,209 @@
+<form>
+
+    <div class="form-group col-lg-12">
+        <h2>Ordrer - detaljer</h2>
+    </div>
+
+    <div class="form-group col-lg-6">
+        <label>Ordreid:</label>
+        <input class="form-control" id="ordreid">
+    </div>
+
+    <div class="form-group col-lg-6">
+        <label>Firebase collection document reference:</label>
+        <input readonly class="form-control" id="ordreDocRefId">
+    </div>
+
+    <div class="form-group col-lg-6">
+        <label>Kundenavn:</label>
+        <select class="form-control" name="kunder" id="kundeid">
+            <option value="">--Velg kunde fra listen--</option>
+        </select>
+
+    </div>
+
+    <div class='form-group col-lg-8' id='ordrelinjetabell'></div>
+
+    <div class="form-group col-lg-12">
+        <button type="button" class="btn btn-primary" onclick="selectOrdreRecord()">Hent ordre</button>
+        <button type="button" class="btn btn-primary" onclick="updateOrdre()">Lagre</button>
+        <button type="button" class="btn btn-success" onclick="subscribeToOrdre()">Start subscription</button>
+        <button type="button" class="btn btn-success" onclick="unSubscribeToOrdre()">Avslutt subscription</button>
+    </div>
+
+    <script>
+
+        // Unngå deklarering av variabel mer enn en gang
+        if (typeof kunder === 'undefined') {
+            var kunder = [];
+        }
+
+        // Unngå deklarering av variabel mer enn en gang
+        if (typeof produkter === 'undefined') {
+            var produkter = [];
+        }
+
+        async function getKunder() {
+            let kunderRef = await db.collection('kunder').get();
+            kunderRef.docs.forEach(doc => kunder.push(doc.data()))
+        }
+
+        async function getProdukter() {
+            let produktRef = await db.collection('produkter').get();
+            produktRef.docs.forEach(doc => produkter.push(doc.data()))
+        }
+
+        function addItemsToKundeSelect() {
+            kunder.forEach((kunde) => {
+                $('#kundeid').append($('<option>', {
+                    value: kunde.kundeid,
+                    text: kunde.navn
+                }));
+            })
+        }
+
+        $(document).ready(async function () {
+
+            if (kunder.length === 0)
+                await getKunder()
+            if (produkter.length === 0)
+                await getProdukter()
+
+            addItemsToKundeSelect()
+
+            jsonToOrdreForm('', { produkter: [] })
+        });
+
+        function jsonToOrdreForm(docrefid, data) {
+
+            function clearOrdreForm() {
+                document.getElementById('errormessage').innerHTML = ''
+                document.getElementById('ordrelinjetabell').innerHTML = ''
+                $("#ordreDocRefId").val('')
+                $("#ordreid").val('');
+                $("#kundeid").val('')
+            }
+
+            function createOrdreLinjeTable(content) {
+                const produktTableHeader = `
+                <tr>
+                    <td>Produkt</td><td>Antall</td><td>Totalt</td>
+                </tr>`
+
+                return '<table class="table table-bordered">'
+                    + produktTableHeader
+                    + content
+                    + '</table>'
+
+            }
+
+            function getProduktSelect(produktId, i) {
+                let result = `<select class="form-control" size=1 id="ol${i}" >`
+                result += `<option value="">Velg produkt</option>`
+                produkter.forEach((p) => {
+                    if (p.produktid === produktId)
+                        result += `<option selected='selected' value="${p.produktid}">${p.navn}</option>`
+                    else
+                        result += `<option value="${p.produktid}">${p.navn}</option>`
+                })
+
+                result = result + '</select>'
+                console.log(result)
+                return result
+            }
+
+            clearOrdreForm()
+
+            $("#ordreDocRefId").val(docrefid)
+            $("#ordreid").val(data.ordreid);
+            $("#kundeid").val(data.kundeid);
+
+
+            //debugger
+            let html = ''
+            data.produkter.forEach((element, i) => {
+                html = `${html}
+                    <tr>                        
+                        <td>${getProduktSelect(element.produktid, i)}</td>
+                        <td><input class="form-control" size="1" id="ant${i}" value='${element.antall}'></td>                                                
+                        <td align="right">${element.sum.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</td>                              
+                    </tr>`
+            });
+            html = `${html}
+                    <tr>                        
+                        <td>${getProduktSelect('', data.produkter.length)}</td>
+                        <td><input class="form-control" size="1" id="ant${data.produkter.length}" value=''></td>                                                
+                        <td align="right"></td>                              
+                    </tr>`
+            document.getElementById('ordrelinjetabell').innerHTML = createOrdreLinjeTable(html)
+
+        }
+
+        function expanderOrdre(ordre) {
+            /* Siden vi ikke kan joine data, må vi bruke avanserte array funksjoner
+               for å fylle ut data. 
+               
+               Bruk map for å iterere over alle produkter
+               Bruk find for å finne et objekt i en array av objekter
+
+            */
+
+            // fyll ut ordre.kundenavn
+            kunde = kunder.find(k => k.kundeid === ordre.kundeid)
+            if (kunde)
+                ordre.kundenavn = kunde.navn
+
+            ordretotal = 0.0
+            // for hvert produkt, fyll ut navn, pris og enhet, samt summer
+            ordre.produkter.map(p => {
+
+                // Finn korresponderende produkt, og oppdater med produktnavn, pris etc, husk å summere ordretotalen
+                // Bruk array.find(... for å finne et spesifikt produkt)
+                            
+            })
+
+            // fyll ut total
+            ordre.total = ordretotal
+            console.log(ordre)
+        }
+
+        function snapshotHandler(result) {
+
+            if (!result.empty) {
+                const snapshot = result.docs[0];
+                let data = snapshot.data();
+                expanderOrdre(data)
+                jsonToOrdreForm(snapshot.id, data)
+                console.log(data)
+            } else {
+                document.getElementById('errormessage').innerHTML = 'Dæven, den fant jeg ikke gitt.., er du sikker på at dataene finnes??'
+            }
+        }
+
+        function selectOrdreRecord() {
+            document.getElementById('errormessage').innerHTML = 'Hmm, Henterutine?, dette skal jo du lage...'
+
+            // HER SKAL DU HENTE EN SPESIFIKK ORDRE, SÅ Kan du kalle snapshotHandler.            
+        }
+
+        // Unngå deklarering av variabel mer enn en gang
+        if (typeof unSubscribeOrdre !== 'undefined') {
+            let unSubscribeOrdre = null
+        }
+
+        function subscribeToOrdre() {
+            document.getElementById('errormessage').innerHTML = 'Hmm, Henterutine?, dette skal jo du lage...'
+
+        }
+
+        function unSubscribeToOrdre() {
+            document.getElementById('errormessage').innerHTML = 'Hmm, Unsubscribe, det bør du kunne etterhvert...'
+        }
+
+        function updateOrdre() {
+            document.getElementById('errormessage').innerHTML = 'Hmm, Oppdater?, her må du trå til selv..'
+        }
+
+    </script>
+
+</form>

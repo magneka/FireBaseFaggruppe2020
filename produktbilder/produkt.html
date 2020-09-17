@@ -1,0 +1,141 @@
+<form>
+
+    <div class="form-group col-lg-12">
+        <h2>Produkter - detaljer</h2>
+        <p>
+            Dette skjermbildet skal du lage ferdig. Se på bildet for kunder.html, der ser du eksempel på hvordan
+            man henter alle data fra en tabell/collection, og populerer en tabell.
+        </p>
+        <p>
+            Begynn med å lage servicerutiene for å populere form fra json, og populere json fra form.
+            Deretter kan du lage rutinen som henter data. Når du har fått dette til, kan du sette opp
+            subscription. Merk trikset ved subscription, der man får returnert unsubscribe rutinen når man
+            starter subscription.
+        </p>
+        <p>
+            Ekstraoppgave: Burde enhet vært en dropbox eller radio med kilo, Stk?
+            Kan du lage søkebilde som søker på alle feltene, og viser data i produkter.html
+        </p>
+    </div>
+
+    <div class="form-group col-lg-5">
+        <h1>Produkt</h1>
+    </div>
+
+    <div class="form-group col-lg-6">
+        <label>Produktid:</label>
+        <input class="form-control" id="produktId">
+    </div>
+
+    <div class="form-group col-lg-6">
+        <label>Firebase collection document reference:</label>
+        <input readonly class="form-control" id="produktDocRefId">
+    </div>
+
+    <div class="form-group col-lg-6">
+        <label>Navn:</label>
+        <input class="form-control" id="produktNavn">
+    </div>
+
+    <div class="form-group col-lg-6">
+        <label>Leverandør:</label>
+        <input class="form-control" id="produktLeverandor">
+    </div>
+
+    <div class="form-group col-lg-6">
+        <label>Enhet:</label>
+        <input class="form-control" id="produktEnhet">
+    </div>
+
+    <div class="form-group col-lg-6">
+        <label>Pris:</label>
+        <input class="form-control" id="produktPris">
+    </div>
+
+    <div class="form-group col-lg-6">
+        <label>Antall i lager:</label>
+        <input class="form-control" id="produktAntallLager">
+    </div>
+
+    <div class="form-group col-lg-12">
+        <button type="button" class="btn btn-primary" onclick="addproduktRecord()">Ny</button>
+        <button type="button" class="btn btn-primary" onclick="selectproduktRecord()">Hent produkt</button>
+        <button type="button" class="btn btn-primary" onclick="updateproduktRecord()">Lagre</button>
+        <button type="button" class="btn btn-danger" onclick="deleteproduktRecord()">Slett</button>
+        <button type="button" class="btn btn-success" onclick="subscribeToproduktRecord()">Start subscription</button>
+        <button type="button" class="btn btn-success" onclick="unSubscribeToproduktRecord()">Avslutt subscription</button>
+    </div>
+
+    <script>
+
+        function clearProduktForm() {
+            document.getElementById('errormessage').innerHTML = ''
+            $("#produktDocRefId").val('')
+            $("#produktId").val('');
+            $("#produktNavn").val('');
+            $("#produktLeverandor").val('')
+            $("#produktEnhet").val('');
+            $("#produktPris").val('');
+            $("#produktAntallLager").val('');
+        }
+
+        function jsonToproduktForm(docrefid, data) {
+            $("#produktDocRefId").val(docrefid)
+            $("#produktId").val(data.produktid);
+            $("#produktNavn").val(data.navn);
+            $("#produktLeverandor").val(data.leverandor);
+            $("#produktEnhet").val(data.enhet);
+            $("#produktPris").val(data.pris);
+            $("#produktAntallLager").val(data.antallLager);
+        }
+
+        function produktFormToJson() {
+            let data = {
+                produktid: $("#produktId").val(),
+                navn: $("#produktNavn").val(),
+                leverandor: $("#produktLeverandor").val(),
+                antallLager: $("#produktAntallLager").val(),
+                pris: $("#produktPris").val(),
+                enhet: $("#produktEnhet").val()
+            }
+            return data
+        }
+
+        function addproduktRecord() {
+            console.log(produktFormToJson())
+            document.getElementById('errormessage').innerHTML = 'Hmm, Opprett?, dette skal jo du lage...'            
+        }
+
+        function selectproduktRecord() {
+            console.log(produktFormToJson())
+            document.getElementById('errormessage').innerHTML = 'Hmm, Henterutine?, dette skal jo du lage...'
+        }
+
+        function updateproduktRecord() {
+            console.log(produktFormToJson())
+            document.getElementById('errormessage').innerHTML = 'Hmm, Oppdater?, dette skal jo du lage...'
+        }
+
+        function deleteproduktRecord() {
+            document.getElementById('errormessage').innerHTML = 'Hmm, Slett? dette skal jo du lage...'            
+        }
+
+        // Unngå deklarering av variabel mer enn en gang
+        if (typeof unSubscribeProdukt !== 'undefined') {
+            let unsubscribeProdukt;
+        }
+
+        function subscribeToproduktRecord() {
+            document.getElementById('errormessage').innerHTML = 'Hmm, Subscribe? dette skal jo du lage...'
+
+            //unsubscribeProdukt = ....
+        }
+
+        function unSubscribeToproduktRecord() {
+            document.getElementById('errormessage').innerHTML = 'Hmm, AvsluttSubscription? dette skal jo du lage...'
+            
+        }
+
+    </script>
+
+</form>

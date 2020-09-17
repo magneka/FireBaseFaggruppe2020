@@ -1,0 +1,102 @@
+<h2>Kundebilde - liste</h2>
+<p>
+    Dette skjermbildet kan liste ut alle kunder.
+</p>
+
+<div class="form-group col-lg-6">
+    <button type="" class="btn btn-primary" onclick="selectAllKunder()">Select all</button>
+    <button type="" class="btn btn-success" onclick="subscribeRealtimeAllKunder()">Subscribe</button>
+    <button type="" class="btn btn-success" onclick="unSubscribeRealtimeAllKunder()">UnSubscribe</button>
+</div>
+
+<div class='container' id='kundetabell'></div>
+
+<script>
+   
+    function createKundeTable(content) {        
+        const kundeTableHeader = '<tr><td>DocumentId</td><td>Kundeid</td><td>Navn</td><td>Adresse</td><td>Postnr</td><td>Poststed</td></tr>'
+
+        return '<table class="table table-bordered">'
+            + kundeTableHeader
+            + content
+            + '</table>'
+    }
+
+    // Merk bruk av backtick som gir string interpolation
+    function kundeDocToTableRow(doc) {
+        return `
+            <tr>
+                <td><button type="button" class="btn btn-link" onclick="gotoKunde('${doc.id}')">${doc.id}</button></td>
+                <td>${doc.data().kundeid}</td>
+                <td>${doc.data().navn}</td>
+                <td>${doc.data().adresse}</td>
+                <td>${doc.data().postNr}</td>
+                <td>${doc.data().postSted}</td>
+            </tr>`
+    }
+
+    function gotoKunde(docref) {
+        debugger
+        db.collection("kunder").doc(docref)
+            .get()
+            .then(function (doc) {
+                if (doc.exists) {
+                    $("#content").load("./kundebilder/kunde.html", function () {
+                        jsonToKundeForm(docref, doc.data())                      
+                    });
+                } else {
+                    console.log("No such document!");
+                }
+            }).catch(function (error) {
+                console.log("Error getting document:", error);
+            });
+    }
+
+    /*
+    Denne funksjonen henter alle kunder med og sender resultatet til en anonym funksjon som bygger opp
+    en html tabell som så skrives i div'en med id kundetabell
+    */
+    function selectAllKunder() {
+
+        var docRef = db.collection("kunder")
+            .get()
+            .then(
+                function (querySnapshot) {
+                    let html = ''
+                    querySnapshot.forEach(function (doc) {
+                        html = `${html}${kundeDocToTableRow(doc)}`
+                    });
+                    document.getElementById('kundetabell').innerHTML = createKundeTable(html)                    
+                });
+    }
+
+    // Unngå deklarering av variabel mer enn en gang
+    if (typeof unSubscribeKunder !== 'undefined') {
+        let unSubscribeKunder
+    }
+
+    /*
+    Denne funksjonen abbonerer på endringer på kunder, som om basen var en servicebuss
+    */
+    function subscribeRealtimeAllKunder() {
+
+        unSubscribeKunder = db.collection("kunder")
+            .onSnapshot(function (doclist) {
+
+                let html = ''
+                doclist.docs.forEach(function (doc) {
+                    html = `${html}${kundeDocToTableRow(doc)}`
+                });
+                document.getElementById('kundetabell').innerHTML = createKundeTable(html)
+
+            });
+    }
+
+    /*
+       Det er viktig å avslutte abbonering på data, ellers vil serveren prøve å levere data etter du har forlatt bildet
+    */
+    function unSubscribeRealtimeAllKunder() {
+        if (unSubscribeKunder)
+            unSubscribeKunder();
+    }
+</script>

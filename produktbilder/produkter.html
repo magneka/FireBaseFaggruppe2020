@@ -1,0 +1,65 @@
+<h2>Produkter - liste</h2>
+<p>
+    Dette skjermbildet kan liste ut alle kunder, og det skal du lage ferdig....
+</p>
+
+<div class="form-group col-lg-6">
+    <button type="button" class="btn btn-primary" onclick="selectAllProukter()">Select all</button>
+    <button type="button" class="btn btn-success" onclick="subscribeRealtimeAllProdukter()">Subscribe</button>
+    <button type="button" class="btn btn-success" onclick="unSubscribeRealtimeAllProdukter()">UnSubscribe</button>
+</div>
+
+<div class='container' id='produkttabell'></div>
+
+<script>
+
+    function createProduktTable(content) {
+        const produktTableHeader = '<tr><td>DocumentId</td><td>produktId</td><td>Produktnavn</td><td>Leverandør</td><td>Pris</td><td>Enhet</td><td>Antall på lager</td></tr>'
+
+        return '<table class="table table-bordered">'
+            + produktTableHeader
+            + content
+            + '</table>'
+    }
+
+    // Merk bruk av backtick som gir string interpolation
+    function produktDocToTableRow(doc) {
+        return `
+            <tr>
+                <td><button type="button" class="btn btn-link" onclick="gotoProdukt('${doc.id}')">${doc.id}</button></td>
+                <td>${doc.data().produktid}</td>
+                <td>${doc.data().navn}</td>
+                <td>${doc.data().leverandor}</td>
+                <td>${doc.data().pris}</td>
+                <td>${doc.data().enhet}</td>
+                <td>${doc.data().antallLager}</td>
+            </tr>`
+    }
+
+    function selectAllProukter() {
+        document.getElementById('errormessage').innerHTML = 'Hmm, SelectAll?, dette skal jo du lage...'      
+    }
+
+
+    // Unngå deklarering av variabel mer enn en gang
+    if (typeof unSubscribeProdukter !== 'undefined') {
+        let unSubscribeProdukter
+    }
+
+    function subscribeRealtimeAllProdukter() {
+        document.getElementById('errormessage').innerHTML = 'Hmm, Pub/Sub?, men dette skal jo du lage...'       
+    }
+
+    function unSubscribeRealtimeAllProdukter() {
+        document.getElementById('errormessage').innerHTML = 'Hmm, avslutt abb?, dette skal jo du lage...'
+
+        if (unSubscribeKunder)
+            unSubscribeKunder();
+    }
+
+    function gotoProdukt(docref) {
+        document.getElementById('errormessage').innerHTML = 'Hmm, goto produktdetaljer?, dette skal jo du lage...'        
+    }
+
+
+</script>

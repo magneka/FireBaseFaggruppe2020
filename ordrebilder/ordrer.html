@@ -1,0 +1,101 @@
+<h2>Ordrer - liste</h2>
+<p>
+    Dette skjermbildet kan liste ut alle kunder, og det skal du lage ferdig....
+    Ordrer har ordrelinjer, så her må du tenke gjennom hvordan gridet skal se ut.
+</p>
+
+<div class="form-group col-lg-6">
+    <button type="button" class="btn btn-primary" onclick="selectAllOrdrer()">Select all</button>
+    <button type="button" class="btn btn-success" onclick="subscribeRealtimeAllOrdrer()">Subscribe</button>
+    <button type="button" class="btn btn-success" onclick="unSubscribeRealtimeAllOrdrer()">UnSubscribe</button>
+</div>
+
+<div class='container' id='ordretabell'></div>
+
+<script>
+
+    function createOrdreTable(content) {
+        const ordreTableHeader = '<tr><td>DocumentId</td><td>Ordreid</td><td>Kundeid</td><td>Kundenavn</td><td>Totalt</td></tr>'
+
+        return '<table class="table table-bordered">'
+            + ordreTableHeader
+            + content
+            + '</table>'
+    }
+
+    async function getKundeListe() {
+
+        let kunder = []
+
+        // Hent kunder, iterer og push til kunder...
+        
+        return kunder
+    }
+
+    async function getProduktListe() {
+        
+        let produkter = []
+        
+        // Hent produkter og push til produker
+        return produkter
+    }
+
+    async function processSnapshot(querySnapshot) {
+        let kunder = await getKundeListe();
+        let produkter = await getProduktListe()
+
+        let html = ''
+
+        querySnapshot.forEach(function (doc) {
+            data = doc.data()
+            console.log(data)
+
+            // Du må finne kunde
+            let kunde = ''
+            // du må finne kundenavn dersom du fant kunden
+            let kundenavn = ''
+
+            let total = 0;
+            // du må beregne totalen
+            
+
+            html = `${html}                        
+                            <tr>
+                                <td><button type="button" class="btn btn-link" onclick="gotoKunde('${doc.id}')">${doc.id}</button></td>
+                                <td>${data.ordreid}</td>
+                                <td>${data.kundeid}</td>
+                                <td>${kundenavn}</td>
+                                <td align="right">${total.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</td>            
+                            </tr>`
+        });
+        document.getElementById('ordretabell').innerHTML = createOrdreTable(html)
+    }
+
+    async function selectAllOrdrer() {
+        document.getElementById('errormessage').innerHTML = 'Hmm, SelectAll?, dette skal jo du lage ferdig.'
+
+        // Hent ordrer og prosesser snapshot
+        //var docRef = 
+    }
+
+    // Unngå deklarering av variabel mer enn en gang
+    if (typeof unsubscribeOrdrer !== 'undefined') {
+        let unsubscribeOrdrer;
+    }
+
+    function subscribeRealtimeAllOrdrer() {
+        document.getElementById('errormessage').innerHTML = 'Hmm, Pub/Sub?, men dette skal jo du lage...'
+
+        // Opprett onsnapshot
+        //var unsubscribeOrdrer = db....
+          
+    }
+
+    function unSubscribeRealtimeAllOrdrer() {
+        document.getElementById('errormessage').innerHTML = 'Hmm, avslutt abb?, dette skal jo du lage...'
+
+        if (unsubscribeOrdrer)
+            unsubscribeOrdrer()
+    }
+
+</script>

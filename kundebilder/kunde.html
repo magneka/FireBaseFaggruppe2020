@@ -1,0 +1,202 @@
+<form>
+
+    <div class="form-group col-lg-10">
+        <h2>Kundebilde - detaljer</h2>
+        <p>
+            Dette skjermbildet kan skrive til database, endre og slette poster i kunder tabellen.
+        </p>
+
+    </div>
+
+    <div class="form-group col-lg-6">
+        <label>Id:</label>
+        <input class="form-control" id="kundeid">
+    </div>
+
+    <div class="form-group col-lg-6">
+        <label>Firebase collection document reference:</label>
+        <input readonly class="form-control" id="kundeDocRefId">
+    </div>
+
+    <div class="form-group col-lg-6">
+        <label>Navn:</label>
+        <input class="form-control" id="kundeNavn">
+    </div>
+
+    <div class="form-group col-lg-6">
+        <label>Adresse:</label>
+        <input class="form-control" id="kundeAdresse">
+    </div>
+
+    <div class="form-group col-lg-3">
+        <label>Postnr:</label>
+        <input class="form-control" id="kundePostnr">
+    </div>
+
+    <div class="form-group col-lg-6">
+        <label>Poststed:</label>
+        <input class="form-control" id="kundePoststed">
+    </div>
+
+    <div class="form-group col-lg-10">
+        <button type="button" class="btn btn-primary" onclick="addKundeRecord()">Ny</button>
+        <button type="button" class="btn btn-primary" onclick="selectKundeRecord()">Hent kunde</button>
+        <button type="button" class="btn btn-primary" onclick="updateKundeRecord()">Lagre</button>
+        <button type="button" class="btn btn-danger" onclick="deleteKundeRecord()">Slett</button>
+        <button type="button" class="btn btn-success" onclick="subscribeToKundeRecord()">Start subscription</button>
+        <button type="button" class="btn btn-success" onclick="unSubscribeToKundeRecord()">Avslutt subscription</button>
+    </div>
+
+    <script>
+
+        function clearKundeForm() {
+            document.getElementById('errormessage').innerHTML = ''
+            $("#kundeDocRefId").val('')
+            $("#kundeid").val('');
+            $("#kundeNavn").val('');
+            $("#kundeAdresse").val('');
+            $("#kundePostnr").val('');
+            $("#kundePoststed").val('');
+        }
+
+        function jsonToKundeForm(docrefid, data) {
+            debugger
+            $("#kundeDocRefId").val(docrefid)
+            $("#kundeid").val(data.kundeid);
+            $("#kundeNavn").val(data.navn);
+            $("#kundeAdresse").val(data.adresse);
+            $("#kundePostnr").val(data.postNr);
+            $("#kundePoststed").val(data.postSted);
+        }
+
+        function kundeFormToJson() {
+            let data = {
+                kundeid: $("#kundeid").val(),
+                navn: $("#kundeNavn").val(),
+                adresse: $("#kundeAdresse").val(),
+                postNr: $("#kundePostnr").val(),
+                postSted: $("#kundePoststed").val()
+            }
+            return data
+        }
+
+        // *************************
+        function addKundeRecord() {
+
+            //debugger
+
+            let data = kundeFormToJson()
+            console.log(data)
+
+            let setDoc = db.collection('kunder')
+                .add(data)
+                .then((docRef) => {
+                    document.getElementById('errormessage').innerHTML = 'Whoa!! Data lagret, sjekk databasen.';
+                    $("#kundeDocRefId").val(docRef.id);
+                })
+                .catch((error) => {
+                    document.getElementById('errormessage').innerHTML = error
+                });
+        }
+
+        function updateKundeRecord() {
+            debugger
+            const data = kundeFormToJson()
+            const docrefId = $("#kundeDocRefId").val()
+
+            db.collection('kunder')
+                .doc(docrefId)
+                .update(data)
+                .then((docRef) => {
+                    document.getElementById('errormessage').innerHTML = 'Whoa!! Data ble oppdatert, sjekk databasen.';
+                })
+                .catch((error) => {
+                    document.getElementById('errormessage').innerHTML = error
+                });
+        }
+
+        // *************************
+        function deleteKundeRecord() {
+
+            const query2 = db.collection('kunder')
+                .where('kundeid', '==', $("#kundeid").val())
+                .get()
+                .then((result) => {
+                    if (!result.empty) {
+                        const snapshot = result.docs[0];
+                        snapshot.ref.delete()
+                        clearKundeForm()
+                    } else {
+                        document.getElementById('errormessage').innerHTML = 'Dæven, den fant jeg ikke gitt.., er du sikker på at du ikke har slettet denne??'
+                    }
+                })
+                .catch((error) => {
+                    document.getElementById('errormessage').innerHTML = error
+                });
+        }
+
+        // *************************
+        function selectKundeRecord() {
+
+            //debugger;            
+
+            const query2 = db.collection('kunder')
+                .where('kundeid', '==', $("#kundeid").val())
+                .get()
+                .then((result) => {
+                    if (!result.empty) {
+                        const snapshot = result.docs[0];
+                        const data = snapshot.data();
+                        clearKundeForm();
+                        //$("#kundeDocRefId").val(snapshot.id);
+                        jsonToKundeForm(snapshot.id, data)
+                        console.log(data)
+                    } else {
+                        document.getElementById('errormessage').innerHTML = 'Dæven, den fant jeg ikke gitt.., er du sikker på at dataene finnes??'
+                    }
+                })
+                .catch((error) => {
+                    document.getElementById('errormessage').innerHTML = error
+                });
+        }
+
+        // Unngå deklarering av variabel mer enn en gang
+        if (typeof unSubscribeKunder !== 'undefined') {
+            let unsubscribeKunde;
+        }
+        
+        // *************************
+        function subscribeToKundeRecord() {
+
+            //debugger;                
+
+            unsubscribeKunde = db
+                .collection('kunder')
+                .where('kundeid', '==', $("#kundeid").val())
+                .onSnapshot(
+                    (querySnapshot) => {
+                        if (!querySnapshot.empty) {
+                            const snapshot = querySnapshot.docs[0];
+                            const data = snapshot.data();
+                            clearKundeForm();
+                            //$("#kundeDocRefId").val(snapshot.id);
+                            jsonToKundeForm(snapshot.id, data)
+                            console.log(data)
+                        } else {
+                            clearKundeForm();
+                            document.getElementById('errormessage').innerHTML = 'Dæven, den fant jeg ikke gitt.., er du sikker på at dataene finnes??'
+                        }
+                    })
+        }
+
+        // *************************
+        function unSubscribeToKundeRecord() {
+            // Merk at unsubscribe funksjonen ble returnert fra onSnapshot 
+            // og tas vare på i global var, må derfor være unik for skjermbildet
+            if (unsubscribeKunde)
+                unsubscribeKunde()
+        }
+
+    </script>
+
+</form>

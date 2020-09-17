@@ -1,0 +1,150 @@
+<h2>Seeding database</h2>
+<p>
+    Dette skjermbildet kan initialisere databasen.
+</p>
+
+<div class="form-group col-lg-6">
+    <button type="" class="btn btn-primary" onclick="seedKunder()">Opprett kunder</button>
+    <button type="" class="btn btn-primary" onclick="seedProdukter()">Opprett produkter</button>
+    <button type="" class="btn btn-primary" onclick="seedOrdrer()">Opprett ordrer</button>
+</div>
+
+<div class='container' id='seedData'></div>
+
+<script>
+
+    if (typeof kunder !== 'undefined') {
+        let kunder = []
+        let produkter = []
+        let ordrer = []
+    }
+
+    kunder = [
+        {
+            kundeid: '1',
+            navn: 'Adecco Norge AS',
+            adresse: 'Rosenkrantz gate 16',
+            postNr: '0130',
+            postSted: 'Oslo',
+        }, {
+            kundeid: '2',
+            navn: 'BKK AS',
+            adresse: 'Kokstadvegen 37',
+            postNr: '5257',
+            postSted: 'Kokstad',
+        }, {
+            kundeid: '3',
+            navn: 'KLP Bergen',
+            adresse: 'Zander Kaaes gate 7',
+            postNr: '5015',
+            postSted: 'Bergen',
+        }, {
+            kundeid: '4',
+            navn: 'Peppes Pizzza',
+            adresse: 'Jernbanesvingen 6',
+            postNr: '1400',
+            postSted: 'SKI',
+        }
+    ]
+
+    produkter = [
+        {
+            produktid: '1',
+            navn: 'Tepperenser',
+            leverandor: 'Sotra Video og Tepperens',
+            pris: 2599.50,
+            antallLager: 13,
+            enhet: 'stk',
+        }, {
+            produktid: '2',
+            navn: 'Movieboks',
+            leverandor: 'Sotra Video og Tepperens',
+            pris: 9850.00,
+            antallLager: 120,
+            enhet: 'stk',
+        }, {
+            produktid: '3',
+            navn: 'Fluestang',
+            leverandor: 'Platou Sport AS',
+            pris: 1499.50,
+            antallLager: 2,
+            enhet: 'stk',
+        }, {
+            produktid: '4',
+            navn: 'Kantareller',
+            leverandor: 'Birkeland fisk og vilt',
+            antallLager: 1457,
+            pris: 250.00,
+            enhet: 'kg',
+        }
+    ]
+
+    ordrer = [
+        {
+            ordreid: '1',
+            kundeid: '1',
+            produkter: [
+                { produktid : '1', antall : 5 },
+                { produktid : '3', antall : 1 }
+            ]
+        }, {
+            ordreid: '2',
+            kundeid: '2',
+            produkter: [
+                { produktid : '1', antall : 5 },
+                { produktid : '3', antall : 1 }
+            ]
+        }, {
+            ordreid: '3',
+            kundeid: '1',
+            produkter: [
+                { produktid : '4', antall : 500 },
+                { produktid : '2', antall : 12 }
+            ]
+        }
+    ]
+
+    function seedKunder() {
+        kunder.forEach(kunde => {
+            let setDoc = db.collection('kunder')
+                .doc()
+                .set(kunde)
+                .then((success) => {
+                    document.getElementById('seedData').innerHTML = JSON.stringify(kunder, undefined, 4)
+                })
+                .catch((error) => {
+                    document.getElementById('errormessage').innerHTML = 'shit pomfrit: ' + error
+                });
+        })
+    }
+
+    function seedProdukter() {
+        produkter.forEach(produkt => {
+            let setDoc = db.collection('produkter')
+                .doc()
+                .set(produkt)
+                .then((success) => {
+                    document.getElementById('seedData').innerHTML = JSON.stringify(produkter, undefined, 4)
+                })
+                .catch((error) => {
+                    document.getElementById('errormessage').innerHTML = 'shit pomfrit: ' + error
+                });
+        })
+    }
+
+    function seedOrdrer() {
+        ordrer.forEach(ordre => {
+            let setDoc = db.collection('ordrer')
+                .doc()
+                .set(ordre)
+                .then((success) => {
+                    document.getElementById('seedData').innerHTML = JSON.stringify(ordrer, undefined, 4)
+                })
+                .catch((error) => {
+                    document.getElementById('errormessage').innerHTML = 'shit pomfrit: ' + error
+                });
+        })
+    }
+
+
+</script>

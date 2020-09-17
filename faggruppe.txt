@@ -1,0 +1,23 @@
+Opprette database
+=================
+
+logg på Gmail kontoen
+gå til 
+..
+..
+
+Sjekk ut repository
+===================
+1. Se på seeding 
+2. Se på pålogging
+3. se på bildet for Kunder - liste
+4. Se på bildet for Kunde - detaljer
+
+-. fortelle triks om debugger
+
+Oppgave
+=======
+a) produkter liste
+b) produkter detaljer
+
+c) 

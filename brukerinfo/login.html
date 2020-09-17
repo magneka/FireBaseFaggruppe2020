@@ -1,0 +1,39 @@
+<div class="form-group col-lg-6">
+    <button type="" class="btn btn-primary" onclick="createUser()">Opprett bruker</button>
+    <button type="" class="btn btn-primary" onclick="loginUser()">Login bruker</button>
+</div>
+
+<script>
+
+    function createUser() {
+
+        debugger;
+
+        firebase.auth().createUserWithEmailAndPassword(
+            'fireBaseUser@ulriken.no',
+            'I11egal!')
+            .then((success) => {
+                document.getElementById('errormessage').innerHTML = 'Whoa!! Bruker er opprettet, sjekk databasen.';
+            })
+            .catch(function (error) { document.getElementById('errormessage').innerHTML = error })
+
+    }
+
+
+
+    function loginUser() {
+        firebase.auth().signInWithEmailAndPassword(
+            'fireBaseUser@ulriken.no',
+            'I11egal!')
+            .then((success) => {
+                document.getElementById('errormessage').innerHTML = 'User is logged in.';
+                console.log("login ok ", success)
+            })
+            .catch((error) => {
+                document.getElementById('errormessage').innerHTML = 'Login failed, email or password is not correct.';
+                console.log("Login failed:", error)
+            })
+
+    }
+
+</script>
